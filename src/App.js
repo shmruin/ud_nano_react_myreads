@@ -1,7 +1,9 @@
 import React, { Component } from 'react'
 import * as BooksAPI from './BooksAPI'
 import './App.css'
+import { Route, Link } from 'react-router-dom'
 import BookListContent from './BookListContent'
+import BookSearch from './BookSearch'
 
 class BooksApp extends Component {
   state = {
@@ -11,9 +13,10 @@ class BooksApp extends Component {
      * users can use the browser's back and forward buttons to navigate between
      * pages, as well as provide a good URL they can bookmark and share.
      */
-    showSearchPage: false,
-    books: []
+    books: [],
+    searchedBooks: []
   }
+
   componentDidMount() {
     BooksAPI.getAll()
     .then((books) => {
@@ -23,43 +26,54 @@ class BooksApp extends Component {
     })
   }
 
+  onSearchBook = (query) => {
+    BooksAPI.search(query)
+    .then((books) => {
+      if (!Array.isArray(books)) {
+        this.setState((currentState) => ({
+          searchedBooks: []
+        }))
+      } else {
+        this.setState((currentState) => ({
+          searchedBooks: books
+        }))
+      }
+    })
+  }
+
+  onUpdateBook = (book, shelf) => {
+    BooksAPI.update(book, shelf)
+    .then(() => {
+      this.componentDidMount()
+    })
+  }
+
   render() {
     return (
       <div className="app">
-        {this.state.showSearchPage ? (
-          <div className="search-books">
-            <div className="search-books-bar">
-              <a className="close-search" onClick={() => this.setState({ showSearchPage: false })}>Close</a>
-              <div className="search-books-input-wrapper">
-                {/*
-                  NOTES: The search from BooksAPI is limited to a particular set of search terms.
-                  You can find these search terms here:
-                  https://github.com/udacity/reactnd-project-myreads-starter/blob/master/SEARCH_TERMS.md
-
-                  However, remember that the BooksAPI.search method DOES search by title or author. So, don't worry if
-                  you don't find a specific author or title. Every search is limited by search terms.
-                */}
-                <input type="text" placeholder="Search by title or author"/>
-
-              </div>
+        <Route exact path='/search' render={() => (
+          <BookSearch
+            onSearchBook={(query) => {
+              this.onSearchBook(query)
+            }}
+            searchedBooks={this.state.searchedBooks}
+            onUpdateBook={this.onUpdateBook}
+          />
+        )} />
+        <Route exact path='/' render={() => (
+          <div className="list-books">
+            <div className="list-books-title">
+              <h1>MyReads</h1>
             </div>
-            <div className="search-books-results">
-              <ol className="books-grid"></ol>
+            <BookListContent
+              books={this.state.books}
+              onUpdateBook={this.onUpdateBook}
+            />
+            <div className="open-search">
+              <Link to='/search'>Add a book</Link>
             </div>
           </div>
-        ) : (
-            <div className="list-books">
-              <div className="list-books-title">
-                <h1>MyReads</h1>
-              </div>
-              <BookListContent 
-                books={this.state.books}
-              />
-              <div className="open-search">
-                <a onClick={() => this.setState({ showSearchPage: true })}>Add a book</a>
-              </div>
-            </div>
-        )}
+        )} />
       </div>
     )
   }

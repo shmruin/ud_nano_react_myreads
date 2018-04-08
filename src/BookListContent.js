@@ -5,6 +5,7 @@ import BookShelf from './BookShelf'
 class BookListContents extends Component {
     static propTypes = {
         books: PropTypes.array.isRequired,
+        onUpdateBook: PropTypes.func.isRequired,
     }
     state = {
         bookshelfTitle: ['Currently Reading', 'Want to Read', 'Read'],
@@ -26,7 +27,7 @@ class BookListContents extends Component {
     
     render() {
         const { bookshelfTitle } = this.state
-        const { books } = this.props
+        const { books, onUpdateBook } = this.props
 
         return (
             <div className="list-books-content">
@@ -36,18 +37,21 @@ class BookListContents extends Component {
                         bookshelfBooks={books.filter((item) => {
                             return item.shelf === this.shelfIdentifier(bookshelfTitle[0])
                         })}
+                        onUpdateBook={onUpdateBook}
                     />
                     <BookShelf 
                         bookshelfTitle={bookshelfTitle[1]}
                         bookshelfBooks={books.filter((item) => {
                             return item.shelf === this.shelfIdentifier(bookshelfTitle[1])
                         })}
+                        onUpdateBook={onUpdateBook}
                     />
                     <BookShelf 
                         bookshelfTitle={bookshelfTitle[2]}
                         bookshelfBooks={books.filter((item) => {
                             return item.shelf === this.shelfIdentifier(bookshelfTitle[2])
                         })}
+                        onUpdateBook={onUpdateBook}
                     />
                 </div>
             </div>

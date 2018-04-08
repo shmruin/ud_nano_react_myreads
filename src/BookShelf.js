@@ -6,17 +6,18 @@ class BookShelf extends Component {
     static propTypes = {
         bookshelfTitle: PropTypes.string.isRequired,
         bookshelfBooks: PropTypes.array.isRequired,
+        onUpdateBook: PropTypes.func.isRequired,
     }
+
     render() {
-        const { bookshelfTitle, bookshelfBooks } = this.props
+        const { bookshelfTitle, bookshelfBooks, onUpdateBook } = this.props
 
         var bookMaking = bookshelfBooks.map(function (item) {
             return (
                 <li key={item.id}>
-                    <Book 
-                        image={item.imageLinks.smallThumbnail}
-                        authors={item.authors}
-                        title={item.title}
+                    <Book
+                        book={item}
+                        onUpdateBook={onUpdateBook}
                     />
                 </li>
             )
