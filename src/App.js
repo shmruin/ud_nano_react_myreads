@@ -1,18 +1,12 @@
 import React, { Component } from 'react'
 import * as BooksAPI from './BooksAPI'
-import './App.css'
 import { Route, Link } from 'react-router-dom'
 import BookListContent from './BookListContent'
 import BookSearch from './BookSearch'
+import './App.css'
 
 class BooksApp extends Component {
   state = {
-    /**
-     * TODO: Instead of using this state variable to keep track of which page
-     * we're on, use the URL in the browser's address bar. This will ensure that
-     * users can use the browser's back and forward buttons to navigate between
-     * pages, as well as provide a good URL they can bookmark and share.
-     */
     books: [],
     searchedBooks: []
   }
@@ -20,35 +14,29 @@ class BooksApp extends Component {
   componentDidMount() {
     BooksAPI.getAll()
     .then((books) => {
-      this.setState((currentState) => ({
-        books: books
-      }))
+      this.setState({books: books})
     })
   }
 
   onSearchBook = (query) => {
     BooksAPI.search(query)
     .then((books) => {
-      if (!Array.isArray(books)) {
-        this.setState((currentState) => ({
-          searchedBooks: []
-        }))
-      } else {
-        this.setState((currentState) => ({
-          searchedBooks: books
-        }))
-      }
+      this.setState({
+        searchedBooks: Array.isArray(books) ? books : []
+      })
     })
   }
 
   onUpdateBook = (book, shelf) => {
     BooksAPI.update(book, shelf)
-    .then(() => {
+    .then((items) => {
       this.componentDidMount()
     })
   }
 
   render() {
+    const { books, searchedBooks } = this.state
+
     return (
       <div className="app">
         <Route exact path='/search' render={() => (
@@ -56,7 +44,8 @@ class BooksApp extends Component {
             onSearchBook={(query) => {
               this.onSearchBook(query)
             }}
-            searchedBooks={this.state.searchedBooks}
+            booksOnShelfs={books}
+            searchedBooks={searchedBooks}
             onUpdateBook={this.onUpdateBook}
           />
         )} />
@@ -66,7 +55,7 @@ class BooksApp extends Component {
               <h1>MyReads</h1>
             </div>
             <BookListContent
-              books={this.state.books}
+              books={books}
               onUpdateBook={this.onUpdateBook}
             />
             <div className="open-search">

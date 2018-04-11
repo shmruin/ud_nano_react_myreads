@@ -11,6 +11,7 @@ class BookListContents extends Component {
         bookshelfTitle: ['Currently Reading', 'Want to Read', 'Read'],
     }
 
+    //Change normal title to the title in data
     shelfIdentifier = (title) => {
         switch(title) {
             case 'Currently Reading':
@@ -32,27 +33,17 @@ class BookListContents extends Component {
         return (
             <div className="list-books-content">
                 <div>
-                    <BookShelf 
-                        bookshelfTitle={bookshelfTitle[0]}
-                        bookshelfBooks={books.filter((item) => {
-                            return item.shelf === this.shelfIdentifier(bookshelfTitle[0])
-                        })}
-                        onUpdateBook={onUpdateBook}
-                    />
-                    <BookShelf 
-                        bookshelfTitle={bookshelfTitle[1]}
-                        bookshelfBooks={books.filter((item) => {
-                            return item.shelf === this.shelfIdentifier(bookshelfTitle[1])
-                        })}
-                        onUpdateBook={onUpdateBook}
-                    />
-                    <BookShelf 
-                        bookshelfTitle={bookshelfTitle[2]}
-                        bookshelfBooks={books.filter((item) => {
-                            return item.shelf === this.shelfIdentifier(bookshelfTitle[2])
-                        })}
-                        onUpdateBook={onUpdateBook}
-                    />
+                    {bookshelfTitle.map((nthTitle) => (
+                        <BookShelf
+                            key={nthTitle}
+                            bookshelfTitle={nthTitle}
+                            bookshelfId={this.shelfIdentifier(nthTitle)}
+                            bookshelfBooks={books.filter((item) => {
+                                return item.shelf === this.shelfIdentifier(nthTitle)
+                            })}
+                            onUpdateBook={onUpdateBook}
+                        />
+                    ))}
                 </div>
             </div>
         )

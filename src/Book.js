@@ -1,28 +1,25 @@
 import React, { Component } from 'react'
 import PropTypes from 'prop-types'
 
+
 class Book extends Component {
     static propTypes = {
+        shelfId: PropTypes.string.isRequired, 
         book: PropTypes.object.isRequired,
         onUpdateBook: PropTypes.func.isRequired,
     }
 
-    state = {
-        shelf: this.props.book.shelf,
-    }
-
     render() {
-        const { shelf } = this.state
-        const { book, onUpdateBook } = this.props
+        const { shelfId, book, onUpdateBook } = this.props
 
         return (
-            <div className="book">
+            <div className="book"> 
                 <div className="book-top">
                     <div className="book-cover" style={{ width: 128, height: 193, backgroundImage: 'url(' + book.imageLinks.smallThumbnail + ')' }}></div>
                     <div className="book-shelf-changer">
                         <select id="bookMoveTo" 
                             onChange={(e) => { onUpdateBook(book, e.target.value) }}
-                            value={shelf}
+                            value={shelfId}
                         >
                             <option value="none" disabled>Move to...</option>
                             <option value="currentlyReading">Currently Reading</option>
